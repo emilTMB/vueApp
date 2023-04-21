@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Моя расса в StarCraft 2</title>
+</head>
+<body>
+    
+    <div class="main">
+        <!-- это наш первый экран если v-show="showMain" а именно ви шоу это деректива а далее идет переменная. если переменная тру тогда показывать ее если нет то нет-->
+        <div class="app" v-show="showMain"> 
+            <div class="app_header">
+                <img src="img/logo.png" class="app_logo">
+            </div>
+            <div class="app_body">
+                <button class="app_btn" @click="goToQuestions">
+                    <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                    <div class="app_btn-text">Начать</div>
+                </button>
+                <button class="app_btn" @click="goToAchivments">
+                    <i class="fa fa-trophy" aria-hidden="true"></i>
+                    <div class="app_btn-text">Достижения</div>
+                </button>
+                <button class="app_btn" @click="goToSocial">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <div class="app_btn-text">Автор</div>
+                </button>
+                <button class="app_btn btn_sound">
+                    <i class="fa fa-volume-up" aria-hidden="true"></i>
+                    <div class="app_btn-text">Звук</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="app achivements" v-show="showAchivments">
+            <div class="app_body">
+                <div class="app_body-inner">
+                    <h2 class="app_body-title">
+                        <i class="fa fa-trophy" aria-hidden="true"></i>
+                        Достижения
+                    </h2>
+                    <div class="app_body-top">
+                        <div class="app_card">
+                            <div class="app_card-text">Счет</div>
+                            <div class="app_card-count">{{totalScore}}</div>
+                        </div>
+                        <div class="app_card">
+                            <div class="app_card-text">Открыто расс</div>
+                            <div class="app_card-count">{{openRaces}}</div>
+                        </div>
+                        <div class="app_card">
+                            <div class="app_card-text">Всего игр</div>
+                            <div class="app_card-count">{{totalGames}}</div>
+                        </div>
+                        <div class="app_card">
+                            <div class="app_card-text">Любимая расса</div>
+                            <div class="app_card-count">{{favoriteRace}}</div>
+                        </div>
+                    </div>
+                    <div class="app_body-middle">
+                        <!-- к это ключ а именно ключ к ключу названия рассы в данном примере рэсе это значение ключа то что говорит нам о рассе и тд райс и к мы назначаем здесь -->
+                        <div class="app_result" v-for="(race, k) in results" v-show="showResultRace[k]" @click="goToResult(k)">
+                            <div class="app_result-score">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <div class="app_result-count">{{race.points}}</div>
+                            </div>
+                            <div class="app_result-name">{{race.name}}</div>
+                            <div class="app_result-amount">{{totalGame[k]}}</div>
+                        </div>
+                    </div>
+                    <div class="app_body-bottom">
+                        <button class="app_btn btn_back btn_achivment" @click="goToMain">
+                            <i class="fa fa-reply" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app" v-show="showQuestions">
+            <div class="app_header">
+                <div class="app_header-inner">
+                    <div class="app_count"># {{number+1}}</div>
+                    <div class="app_text">{{questions[number][0]}}</div>
+                </div>
+            </div>
+             <!-- далее с помощью ви фор мы указываем любую переменную, а далее индекс и тогда будут создаваться столько кнопок в куэсченз намбер ноль сколько в элемментов в массиве и им будет присваиваться индекс -->
+            <div class="app_body" v-for="(answer, i) in questions[number][1]" v-on:click="nextQuestions(questions[number][2][i])">
+                <button class="app_btn">
+                    <div class="app_btn-text">{{answer}}</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="app" v-show="showSocial">
+            <div class="app_body">
+                <a target="_blank" href="#" class="app_btn">
+                    <i class="fa fa-instangram" aria-hidden="true"></i>
+                    <div class="app_btn-text">instagram</div>
+                </a>
+                <a target="_blank" href="#" class="app_btn">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                    <div class="app_btn-text">twitter</div>
+                </a>
+                <a target="_blank" href="#" class="app_btn">
+                    <i class="fa fa-facebook" aria-hidden="true"></i>
+                    <div class="app_btn-text">facebook</div>
+                </a>
+                <a target="_blank" href="#" class="app_btn">
+                    <i class="fa fa-vk" aria-hidden="true"></i>
+                    <div class="app_btn-text">Vkontakte</div>
+                </a>
+                <a target="_blank" href="#" class="app_btn">
+                    <i class="fa fa-youtube-play" aria-hidden="true"></i>
+                    <div class="app_btn-text">youtube</div>
+                </a>
+                <button class="app_btn btn_back" @click="goToMain">
+                    <i class="fa fa-reply" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="app results" v-bind:data-race="resultRace" v-show="showResult">
+            <div class="app_body">
+                <div class="app_results-inner">
+                    <div class="results_title">{{results[resultRace].name}}</div>
+                    <div class="results_img">
+                        <img v-bind:src="'img/'+resultRace+'_logo.png'">
+                    </div>
+                    <div class="results_text-box">
+                        <p class="results_text">{{results[resultRace].description}}</p>
+                        <p class="results_quote">{{results[resultRace].quote1}}</p>
+                        <p class="results_quote">{{results[resultRace].quote2}}</p>
+                        <p class="results_author">{{results[resultRace].author}}</p>
+                    </div>
+                    <div>
+                        <!-- двоеточие перед класс тоже самое что и вибайнд -->
+                        <button :class="'app_btn btn_back btn_'+resultRace" @click="goToAchivments">
+                            <i class="fa fa-reply" aria-hidden="true"></i>
+                        </button> 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/vue.js"></script>
+    <script src="js/const.js"></script>
+    <script>
+
+
+
+    let app = new Vue({
+        el: '.main', // теперь див с классом майн будет элемментом Вью
+        data: { //в ключе даты создадим две переменные
+            showMain: true,
+            showSocial: false,
+            showAchivments: false,
+            showQuestions:false,
+            showResult: false,
+            number: 0,
+            score: {
+                'zerg': 0,
+                'primal': 0,
+                'protoss': 0,
+                'terran': 0,
+                'taldarim': 0,
+            },
+            //создаем переменную
+            totalGame: localStorage.getItem('sc2TotalGame') ? JSON.parse(localStorage.getItem('sc2TotalGame')) : {
+                'zerg': 0,
+                'primal': 0,
+                'protoss': 0,
+                'taldarim': 0,
+                'terran': 0,
+                'infested': 0,
+                'hybrid': 0,
+            },
+            // количество сыгранных матчей
+            totalGames: localStorage.getItem('sc2TotalGames') ? localStorage.getItem('sc2TotalGames') : 0,
+            // questions это константа прописанная в файле конст, ровно как и резалтс
+            questions: questions,
+            results: results,
+            resultRace: 'infested',
+        },
+        // создаем свои методы
+        // при использовании метода переменные становятся равны этим значениям
+        methods: {
+            goToMain() {
+            this.showMain = true
+            this.showSocial = false
+            this.showAchivments = false
+            this.showQuestions = false
+            this.showResult = false
+            },
+            goToSocial() {
+            this.showMain = false
+            this.showSocial = true
+            this.showAchivments = false
+            this.showQuestions = false
+            this.showResult = false
+            },
+            goToAchivments() {
+                // если ты уже играл и количество попыток больше нуля тогда
+                if(this.totalGames > 0) {
+                    this.showMain = false
+                    this.showSocial = false
+                    this.showAchivments = true
+                    this.showQuestions = false
+                    this.showResult = false
+                } else {
+                    // если ты не играл тогда
+                    this.goToQuestions()
+                }
+            },
+            goToQuestions() {
+                // счет будет равен нулю поскольку кадое начало игры обнуляет результат предыдущей
+                this.score = {
+                'zerg': 0,
+                'primal': 0,
+                'protoss': 0,
+                'taldarim': 0,
+                'terran': 0,
+                'infested': 0,
+                'hybrid': 0,
+                }
+                this.showMain = false
+                this.showSocial = false
+                this.showAchivments = false
+                this.showQuestions = true
+                this.showResult = false
+            },
+            goToResult(race) {
+                this.showMain = false
+                this.showSocial = false
+                this.showAchivments = false
+                this.showQuestions = false
+                this.showResult = true
+                this.resultRace = race
+            },
+            nextQuestions(answer) {
+                if(this.number == 24) {
+                    this.number = 0
+                    this.endGame();
+                } else {
+                    this.number++
+                }
+                eval(answer)
+            },
+            endGame() {
+                this.totalGames++
+                localStorage.setItem('sc2TotalGames', this.totalGames)
+                // Зерг
+                if(this.score.zerg > this.score.protoss && this.score.zerg > this.score.terran && this.score.primal < 8 && Math.abs(this.score.protoss - this.score.zerg) > 3) {
+                    this.goToResult('zerg')
+                    this.totalGame.zerg++
+                }
+                //Изначальный зерг
+                else if (this.score.primal > this.score.protoss &&
+                this.score.primal > this.score.terran &&
+                this.score.primal == 8) {
+                    this.goToResult('primal');
+                    this.totalGame.primal++
+                }
+                // Протосс
+                else if (this.score.protoss > this.score.zerg &&
+                this.score.protoss > this.score.terran &&
+                this.score.taldarim == 5 &&
+                Math.abs(this.score.protoss - this.score.zerg) > 3) {
+                    this.goToResult('protoss');
+                    this.totalGame.protoss++
+                }
+                // Талдарим
+                else if (this.score.protoss > this.score.zerg &&
+                this.score.protoss > this.score.terran &&
+                this.score.taldarim == 5) {
+                    this.goToResult('taldarim');
+                    this.totalGame.taldarim++
+                }
+                // Терран
+                else if (this.score.terran > this.score.zerg &&
+                this.score.terran > this.score.protoss) {
+                    this.goToResult('terran');
+                    this.totalGame.terran++
+                }
+                // Гибрид
+                else if (Math.abs(this.score.protoss - this.score.zerg) <= 3) {
+                    this.goToResult('hybrid');
+                    this.totalGame.terran++
+                }
+                // Зараженный
+                else {
+                    this.goToResult('infested');
+                    this.totalGame.terran++ 
+                }
+                localStorage.setItem('sc2TotalGame', JSON.stringify(this.totalGame))
+            }
+        },
+        computed: {
+            totalScore() {
+                let score = 0
+                for(let i in this.totalGame){
+                    score+=(this.totalGame[i]*results[i].points)
+                }
+                return score
+            },
+            openRaces() {
+                let count = 0
+                for(let i in this.totalGame){
+                    if(this.totalGame[i]>0) count++
+                }
+                return count
+            },
+            favoriteRace() {
+                let max = 'zerg'
+                for(let i in this.totalGame) {
+                    if(this.totalGame[i]>this.totalGame[max]) {
+                        max=i
+                    }
+                }
+                return results[max].name
+            },
+            showResultRace() {
+                return {
+                    'zerg': this.totalGame.zerg > 0 ? true : false,
+                    'primal': this.totalGame.primal > 0 ? true : false,
+                    'protoss': this.totalGame.protoss > 0 ? true : false,
+                    'terran': this.totalGame.terran > 0 ? true : false,
+                    'taldarim': this.totalGame.taldarim > 0 ? true : false,
+                    'infested': this.totalGame.infested > 0 ? true : false,
+                    'hybrid': this.totalGame.hybrid > 0 ? true : false,
+                }
+            }
+        }
+    
+    })
+
+
+
+    </script>
+</body>
+</html>
