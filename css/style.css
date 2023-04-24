@@ -14,6 +14,7 @@ i.fa {
 }
 .main {
     background-image: url(../img/background__main.jpg);
+    background-size: cover;
     background-repeat: repeat-x; /* чтобы наш фон повторялся по оси х здесь будет анимация*/
     animation: slide 90s linear infinite;
 }
